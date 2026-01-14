@@ -1,0 +1,10 @@
+[project]
+name = "muxtools-helper-scripts"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "ass>=1.0.3",
+    "muxtools>=0.4.1",
+]
