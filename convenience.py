@@ -1,6 +1,6 @@
 from muxtools import SubFile, ASSHeader
-from presets import GANDHI_PRESET, SIGNS_PRESET
-from line_manipulators import remove_credits, unfuck_bd_dx, strip_weird_unicode, fix_missing_glyphs
+from .presets import GANDHI_PRESET, SIGNS_PRESET
+from .line_manipulators import remove_credits, unfuck_bd_dx, strip_weird_unicode, fix_missing_glyphs
 from ass import Style
 
 
