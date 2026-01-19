@@ -43,7 +43,34 @@ signs_default = Style(
     back_color=Color(r=0x00, g=0x00, b=0x00, a=0xA0),
 )
 
-SIGNS_PRESET = [signs_default]
+sign_default = Style(
+    #TODO find a better font; font size too small?
+    name="Sign",
+    fontname="Arial",
+    fontsize=60.0,
+    outline=4.0,
+    shadow=0.0,
+    margin_l=60,
+    margin_r=60,
+    margin_v=60,
+    bold=True,
+    italic=False,
+    underline=False,
+    strike_out=False,
+    scale_x=100.0,
+    scale_y=100.0,
+    spacing=0.0,
+    angle=0.0,
+    encoding=1,
+    alignment=8,
+    border_style=1,
+    primary_color=Color(r=0xFF, g=0xFF, b=0xFF, a=0x00),
+    secondary_color=Color(r=0xFF, g=0x00, b=0x00, a=0x00),
+    outline_color=Color(r=0x00, g=0x00, b=0x00, a=0x00),
+    back_color=Color(r=0x00, g=0x00, b=0x00, a=0xA0),
+)
+
+SIGNS_PRESET = [signs_default, sign_default]
 
 noto_default = Style(
     name="Default",
