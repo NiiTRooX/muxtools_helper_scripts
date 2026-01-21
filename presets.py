@@ -2,6 +2,10 @@ from muxtools.subtitle import get_complimenting_styles, default_style_args
 from ass.line import Style
 from ass.data import Color
 
+
+__all__ = ["GANDHI_PRESET", "SIGNS_PRESET", "NOTO_PRESET", "JPN_PRESET", "KOR_PRESET", "SC_PRESET", "TC_PRESET", "THAI_PRESET", "ARAB_PRESET"]
+
+
 gandhi_default = Style(
     name="Default",
     fontname="Gandhi Sans",
@@ -83,6 +87,7 @@ noto_default = Style(
     margin_v=55,
     **default_style_args,
 )
+
 NOTO_PRESET = [noto_default, *get_complimenting_styles(noto_default)]
 
 jpn_default = Style(
@@ -96,6 +101,7 @@ jpn_default = Style(
     margin_v=55,
     **default_style_args,
 )
+
 JPN_PRESET = [jpn_default, *get_complimenting_styles(jpn_default)]
 
 kor_default = Style(
@@ -109,6 +115,7 @@ kor_default = Style(
     margin_v=55,
     **default_style_args,
 )
+
 KOR_PRESET = [kor_default, *get_complimenting_styles(kor_default)]
 
 sc_default = Style(
@@ -122,6 +129,7 @@ sc_default = Style(
     margin_v=55,
     **default_style_args,
 )
+
 SC_PRESET = [sc_default, *get_complimenting_styles(sc_default)]
 
 tc_default = Style(
@@ -135,6 +143,7 @@ tc_default = Style(
     margin_v=55,
     **default_style_args,
 )
+
 TC_PRESET = [tc_default, *get_complimenting_styles(tc_default)]
 
 thai_default = Style(
@@ -148,6 +157,7 @@ thai_default = Style(
     margin_v=55,
     **default_style_args,
 )
+
 THAI_PRESET = [thai_default, *get_complimenting_styles(thai_default)]
 
 arab_default = Style(
@@ -161,4 +171,5 @@ arab_default = Style(
     margin_v=55,
     **default_style_args,
 )
+
 ARAB_PRESET = [arab_default, *get_complimenting_styles(arab_default)]

@@ -4,6 +4,9 @@ from muxtools.subtitle.basesub import _Line
 from collections.abc import Callable
 
 
+__all__ = ["unfuck_bd_dx", "remove_credits", "strip_weird_unicode", "replace_font_for_glyphs", "fix_missing_glyphs", "replace_substr", "replace_style"]
+
+
 def _replace_style_with_tag(line:_Line, style:str, tag:str, exact:bool, default_style:str="Default") -> None:
     """
     Prepends a formatting tag to the text of a line when its style matches the given style criteria, then resets the line's style to a default value.
