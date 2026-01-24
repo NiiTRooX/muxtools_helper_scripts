@@ -38,7 +38,7 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
     """
     subfile = subfile\
         .set_headers((ASSHeader.LayoutResX, 640), (ASSHeader.LayoutResY, 360), (ASSHeader.ScaledBorderAndShadow, True), (ASSHeader.YCbCr_Matrix, "TV.709"))\
-        .unfuck_cr(dialogue_styles=["main", "default", "narrator", "narration", "bottomcenter"])\
+        .unfuck_cr(dialogue_styles=["main", "default", "narrator", "narration", "bottomcenter"], alt_styles=["alt", "overlap"])\
         .manipulate_lines(strip_weird_unicode)\
         .restyle(styles)
     if remove_credits:
