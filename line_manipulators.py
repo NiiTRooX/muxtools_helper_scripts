@@ -2,6 +2,7 @@
 from muxtools.subtitle.sub import LINES
 from muxtools.subtitle.basesub import _Line
 from collections.abc import Callable
+import re
 
 
 __all__ = ["unfuck_bd_dx", "remove_credits", "strip_weird_unicode", "replace_font_for_glyphs", "fix_missing_glyphs", "replace_substr", "replace_style"]
@@ -105,9 +106,12 @@ def strip_weird_unicode(lines:LINES) -> LINES:
 
 
 def replace_font_for_glyphs(glyphs:list[str], replacement_font:str, styles:list[str]|None=None) -> Callable[[LINES], LINES]:
-    """
+    r"""
     Replaces the font of glyphs.
-    After the glyph the font is set back to the style default.
+    After the glyph the font is set back to the last \fn tag or style default if it's not present.
+    
+    This will produce unwanted results if you have multiple redundant \fn tags with different fonts eg: {\fnArial\fnGeorgia} fix your shit first
+    
     Returns a function usable with .manipulate_lines().
     
     Args:
@@ -117,23 +121,34 @@ def replace_font_for_glyphs(glyphs:list[str], replacement_font:str, styles:list[
     """
     if type(glyphs) == str:
         glyphs = list(glyphs)
+    fn_pattern = re.compile(r'\\fn([^\\}]+)(?=[\\}])')  # this is supposed to find \fnFont that ends with '\' or '}'. Include this? ')'
     def _replace_font_for_glyph(lines:LINES) -> LINES:
         for line in lines:
             for glyph in glyphs:
-                if styles:
-                    if line.style.casefold() in [style.casefold() for style in styles]:
-                        line.text = line.text.replace(glyph, fr"{{\fn{replacement_font}}}{glyph}{{\fn}}")
-                else:
-                    line.text = line.text.replace(glyph, fr"{{\fn{replacement_font}}}{glyph}{{\fn}}")
+                if glyph in line.text:
+                    if not styles or (line.style.casefold() in [style.casefold() for style in styles]):
+                        replaced_text = ""
+                        end_text = ""
+                        prev_find = 0
+                        for glyph_match in re.finditer(glyph, line.text):
+                            pos = glyph_match.start()
+                            before = line.text[:pos]
+                            fn_matches = fn_pattern.findall(before)
+                            last_fn = fn_matches[-1] if fn_matches else ""
+                            replaced_text += line.text[prev_find:pos] + fr"{{\fn{replacement_font}}}{glyph}{{\fn{last_fn}}}"
+                            end_text = line.text[pos+1:] # out of bounds if last character?
+                            prev_find = pos + 1
+                        line.text = replaced_text + end_text
+                        # line.text = line.text.replace(glyph, fr"{{\fn{replacement_font}}}{glyph}{{\fn}}")
         return lines
     return _replace_font_for_glyph
 
 
 def fix_missing_glyphs(lines:LINES) -> LINES:
-    """
+    r"""
     Replaces the used font for glyphs that most fonts don't include.
     
-    After the glyph the font is set back to the style default. This might break things if you use override tags for fonts.
+    This will produce unwanted results if you have multiple redundant \fn tags with different fonts eg: {\fnArial\fnGeorgia} fix your shit first
     
     This replaces stuff regardless of style and whether it is commented or not.
     """
@@ -143,7 +158,9 @@ def fix_missing_glyphs(lines:LINES) -> LINES:
               ('（', "Yu Gothic"), # 5mb font, who cares
               ('α', "Arial"),
               ('☆', "Segoe UI Symbol"),
-              ('❤', "Segoe UI Symbol")
+              ('❤', "Segoe UI Symbol"),
+              ('「', "Yu Gothic UI Semibold"),
+              ('」', "Yu Gothic UI Semibold")
               ]  # add glyphs here
     for glyph, font in glyphs:
         lines = replace_font_for_glyphs(glyphs=glyph, replacement_font=font)(lines)
