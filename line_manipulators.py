@@ -136,7 +136,7 @@ def replace_font_for_glyphs(glyphs:list[str], replacement_font:str, styles:list[
                             fn_matches = fn_pattern.findall(before)
                             last_fn = fn_matches[-1] if fn_matches else ""
                             replaced_text += line.text[prev_find:pos] + fr"{{\fn{replacement_font}}}{glyph}{{\fn{last_fn}}}"
-                            end_text = line.text[pos+1:] # out of bounds if last character?
+                            end_text = line.text[pos+1:]
                             prev_find = pos + 1
                         line.text = replaced_text + end_text
                         # line.text = line.text.replace(glyph, fr"{{\fn{replacement_font}}}{glyph}{{\fn}}")
@@ -177,12 +177,7 @@ def replace_substr(old:str, new:str, styles:list[str]=None) -> Callable[[LINES],
     
     def _replace_substr(lines:LINES) -> LINES:
         for line in lines:
-            if styles:
-                for style in styles:
-                    if line.style.casefold() == style.casefold():
-                        line.text = line.text.replace(old, new)
-                        break
-            else:
+            if not styles or (line.style.casefold() in styles):
                 line.text = line.text.replace(old, new)
         return lines
     return _replace_substr
