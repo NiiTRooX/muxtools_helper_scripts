@@ -110,7 +110,7 @@ def replace_font_for_glyphs(glyphs:list[str], replacement_font:str, styles:list[
     Replaces the font of glyphs.
     After the glyph the font is set back to the last \fn tag or style default if it's not present.
     
-    This will produce unwanted results if you have multiple redundant \fn tags with different fonts eg: {\fnArial\fnGeorgia} fix your shit first
+    This will produce unwanted results if you have multiple redundant \fn tags with different fonts eg: {\fnArial\fnGeorgia} fix your shit first.
     
     Returns a function usable with .manipulate_lines().
     
