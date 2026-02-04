@@ -1,5 +1,5 @@
 [project]
-name = "muxtools-helper-scripts"
+name = "muxtools_helper_scripts"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
