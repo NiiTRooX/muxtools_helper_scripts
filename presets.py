@@ -22,7 +22,6 @@ gandhi_default = Style(
 GANDHI_PRESET = [gandhi_default, *get_complimenting_styles(gandhi_default)]
 
 signs_default = Style(
-    #TODO find a better font; font size too small?
     name="Signs",
     fontname="Arial",
     fontsize=60.0,
