@@ -6,6 +6,7 @@ from ass.data import Color
 __all__ = ["GANDHI_PRESET", "SIGNS_PRESET", "NOTO_PRESET", "JPN_PRESET", "KOR_PRESET", "SC_PRESET", "TC_PRESET", "THAI_PRESET", "ARAB_PRESET"]
 
 
+# slightly smaller left and right margins to prevent 3-liners and I don't mind it extending further
 gandhi_default = Style(
     name="Default",
     fontname="Gandhi Sans",
@@ -48,7 +49,6 @@ signs_default = Style(
 )
 
 sign_default = Style(
-    #TODO find a better font; font size too small?
     name="Sign",
     fontname="Arial",
     fontsize=60.0,
