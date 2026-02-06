@@ -92,14 +92,17 @@ def video_track2(file:PathLike|GlobSearch, name:str="", lang:str="ja", default:b
     return premux
 
 
-def get_sub_track(file:PathLike, lang:str, is_forced:bool=False, is_default:bool|None=None, preserve_delay:bool=False, quiet:bool=True) -> SubFile | None:
+def get_sub_track(file:PathLike, name:str|None=None, lang:str|None=None, is_forced:bool=False, is_default:bool|None=None, preserve_delay:bool=False, quiet:bool=True) -> SubFile | None:
     """
     Returns a SubFile object of the first matched track.
+    Useful if you dont know the track ID or if it changes between episodes.
     
     :param file: Input mkv file
     :type file: PathLike
+    :param name: Name to match, case insensitively and preceeding/leading whitespace removed.
+    :type name: str | None
     :param lang: Language to match. This can be any of the possible formats like English/eng/en and is case insensitive.
-    :type lang: str
+    :type lang: str | None
     :param is_forced: Forced flag to match.
     :type is_forced: bool
     :param is_default: Default flag to match. Gets ignored if set to None.
@@ -114,7 +117,7 @@ def get_sub_track(file:PathLike, lang:str, is_forced:bool=False, is_default:bool
         condition = lambda track: (track.is_forced == is_forced) and (track.is_default == is_default)
     else:
         condition = lambda track: track.is_forced == is_forced
-    parsed_track = parsed.find_tracks(lang=lang, type=TrackType.SUB, error_if_empty=True, caller=caller, custom_condition=condition)[0]
+    parsed_track = parsed.find_tracks(name=name, lang=lang, type=TrackType.SUB, error_if_empty=True, caller=caller, custom_condition=condition)[0]
     if not quiet:
         if parsed_track:
             print(f"Matched subtitle track {parsed_track.relative_index} with title: {parsed_track.title}")
