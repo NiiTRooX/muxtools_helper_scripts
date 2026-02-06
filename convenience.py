@@ -1,11 +1,11 @@
-from muxtools import SubFile, ASSHeader, Premux, PathLike, GlobSearch
+from muxtools import ParsedFile, SubFile, ASSHeader, Premux, PathLike, GlobSearch, TrackType, ensure_path_exists
 from .presets import GANDHI_PRESET, SIGNS_PRESET
 from .line_manipulators import unfuck_bd_dx, strip_weird_unicode, fix_missing_glyphs
 from .line_manipulators import remove_credits as rmv_credits
 from ass import Style
 
 
-__all__ = ["restyle_cr", "restyle_bd_dx", "get_style", "video_track2"]
+__all__ = ["restyle_cr", "restyle_bd_dx", "get_style", "video_track2", "get_sub_track", "all_subs_from_mkv"]
 
 
 def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=True, styles:Style|list[Style]=GANDHI_PRESET, replace_glyph_font:bool=False) -> SubFile:
@@ -90,3 +90,65 @@ def video_track2(file:PathLike|GlobSearch, name:str="", lang:str="ja", default:b
         mkvmerge_args=f'''--no-global-tags --no-chapters --default-track-flag 0:{default} --forced-display-flag 0:{forced} --language 0:{lang} --track-name 0:"{name}"'''
     )
     return premux
+
+
+def get_sub_track(file:PathLike, lang:str, is_forced:bool=False, is_default:bool|None=None, preserve_delay:bool=False, quiet:bool=True) -> SubFile | None:
+    """
+    Returns a SubFile object of the first matched track.
+    
+    :param file: Input mkv file
+    :type file: PathLike
+    :param lang: Language to match. This can be any of the possible formats like English/eng/en and is case insensitive.
+    :type lang: str
+    :param is_forced: Forced flag to match.
+    :type is_forced: bool
+    :param is_default: Default flag to match. Gets ignored if set to None.
+    :type is_default: bool | None
+    :param preserve_delay: Preserve existing container delay
+    :type preserve_delay: bool
+    """
+    caller = "get_sub_track"
+    file = ensure_path_exists(file, caller)
+    parsed = ParsedFile.from_file(file, caller)
+    if is_default != None:
+        condition = lambda track: (track.is_forced == is_forced) and (track.is_default == is_default)
+    else:
+        condition = lambda track: track.is_forced == is_forced
+    parsed_track = parsed.find_tracks(lang=lang, type=TrackType.SUB, error_if_empty=True, caller=caller, custom_condition=condition)[0]
+    if not quiet:
+        if parsed_track:
+            print(f"Matched subtitle track {parsed_track.relative_index} with title: {parsed_track.title}")
+        else:
+            print("No matches found")
+    return SubFile.from_mkv(file, track=parsed_track.relative_index, preserve_delay=preserve_delay, quiet=quiet)
+
+
+class SubFileExtended(SubFile):
+    title: str | None
+    language: str | None
+    language_ietf: str | None
+    is_default: bool
+    is_forced: bool
+
+
+def all_subs_from_mkv(file:PathLike, preserve_delay: bool = False) -> list[SubFileExtended]:
+    """
+    WIP
+    
+    Extract all subtitles with language and title attributes.
+    """
+    caller = "all_subs_srom_mkv"
+    file = ensure_path_exists(file, caller)
+    parsed = ParsedFile.from_file(file, caller)
+    parsed_tracks = parsed.find_tracks(type=TrackType.SUB)
+    sub_files = []
+    for track in parsed_tracks:
+        subfile = SubFileExtended.from_mkv(file, track=track.relative_index, preserve_delay=preserve_delay)
+        subfile.title = track.title
+        # Language object for fancy langcodes stuff
+        subfile.language = track.language
+        subfile.language_ietf = track.raw_mkvmerge.properties.language_ietf
+        subfile.is_default = track.is_default
+        subfile.is_forced = track.is_forced
+        sub_files.append(subfile)
+    return sub_files
