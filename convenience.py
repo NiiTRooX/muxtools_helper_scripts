@@ -10,31 +10,18 @@ __all__ = ["restyle_cr", "restyle_bd_dx", "get_style", "video_track2", "get_sub_
 
 def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=True, styles:Style|list[Style]=GANDHI_PRESET, replace_glyph_font:bool=False) -> SubFile:
     """
-    Normalize and restyle Crunchyroll subtitle files for consistent formatting.
+    This function applies a standard set of ASS header values, converts top styles into tags, and reapplies one or more target styles.
+    Optional post-processing steps allow removal of credit lines, macron stripping, and glyph font substitution for missing characters.
 
-    This function applies a standard set of ASS header values, cleans up common
-    Crunchyroll-specific formatting issues, normalizes dialogue text, and
-    reapplies one or more target styles. Optional post-processing steps allow
-    removal of credit lines, macron stripping, and glyph font substitution for
-    missing characters.
+    Args:
+        subfile (SubFile): The subtitle file to be processed and restyled.
+        remove_credits (bool, optional): Whether to remove translator credits etc. lines. Defaults to True.
+        purge_macrons (bool, optional): Whether to remove macrons from dialogue text. Defaults to True.
+        styles (Style | list[Style], optional): Style or list of styles to apply to the subtitle file. Defaults to `GANDHI_PRESET`.
+        replace_glyph_font (bool, optional): Whether to replace fonts to fix missing glyphs. Defaults to False.
 
-    Parameters
-    ----------
-    subfile : SubFile
-        The subtitle file to be processed and restyled.
-    remove_credits : bool, optional
-        Whether to remove opening/ending credit lines, by default True.
-    purge_macrons : bool, optional
-        Whether to remove macrons from dialogue text, by default True.
-    styles : Style or list[Style], optional
-        Style or list of styles to apply to the subtitle file. Defaults to
-        `GANDHI_PRESET`.
-    replace_glyph_font : bool, optional
-        Whether to replace fonts to fix missing glyphs, by default False.
-
-    Returns
-    -------
-    SubFile
+    Returns:
+        SubFile: The processed and restyled subtitle file.
     """
     subfile = subfile\
         .set_headers((ASSHeader.LayoutResX, 640), (ASSHeader.LayoutResY, 360), (ASSHeader.ScaledBorderAndShadow, True), (ASSHeader.YCbCr_Matrix, "TV.709"))\
@@ -94,21 +81,20 @@ def video_track2(file:PathLike|GlobSearch, name:str="", lang:str="ja", default:b
 
 def get_sub_track(file:PathLike, name:str|None=None, lang:str|None=None, is_forced:bool=False, is_default:bool|None=None, preserve_delay:bool=False, quiet:bool=True) -> SubFile | None:
     """
-    Returns a SubFile object of the first matched track.
-    Useful if you dont know the track ID or if it changes between episodes.
-    
-    :param file: Input mkv file
-    :type file: PathLike
-    :param name: Name to match, case insensitively and preceeding/leading whitespace removed.
-    :type name: str | None
-    :param lang: Language to match. This can be any of the possible formats like English/eng/en and is case insensitive.
-    :type lang: str | None
-    :param is_forced: Forced flag to match.
-    :type is_forced: bool
-    :param is_default: Default flag to match. Gets ignored if set to None.
-    :type is_default: bool | None
-    :param preserve_delay: Preserve existing container delay
-    :type preserve_delay: bool
+    Return a SubFile object of the first matched track.
+
+    Useful if you do not know the track ID or if it changes between episodes.
+
+    Args:
+        file (PathLike): Input MKV file.
+        name (str | None): Name to match. Matching is case-insensitive and leading/trailing whitespace is removed.
+        lang (str | None): Language to match. Accepts formats such as "English", "eng", or "en". Matching is case-insensitive.
+        is_forced (bool): Forced flag to match.
+        is_default (bool | None): Default flag to match. Ignored if set to None.
+        preserve_delay (bool): Whether to preserve the existing container delay.
+
+    Returns:
+        SubFile: The first track that matches the given criteria.
     """
     caller = "get_sub_track"
     file = ensure_path_exists(file, caller)
