@@ -140,6 +140,10 @@ def all_subs_from_mkv(file:PathLike, preserve_delay: bool = False) -> list[SubFi
     
     Extract all subtitles with language and title attributes.
     """
+    # TODO I'm not happy with the language
+    # maybe use language for comparing with standardize_tag()
+    # and language_ietf for setting the language tag of the track
+    #? is language_ietf always present?
     caller = "all_subs_srom_mkv"
     file = ensure_path_exists(file, caller)
     parsed = ParsedFile.from_file(file, caller)
