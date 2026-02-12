@@ -24,21 +24,16 @@ def _replace_style_with_tag(line:_Line, style:str, tag:str, exact:bool, default_
     """
     if tag[0] != '\\':
         tag = '\\' + tag
-    if exact:
-        if style.casefold() == line.style.casefold():
-            line.text = f"{{{tag}}}{line.text}"
-            line.style = default_style
-    else:
-        if style.casefold() in line.style.casefold():
-            line.text = f"{{{tag}}}{line.text}"
-            line.style = default_style
+    if (exact and style.casefold() == line.style.casefold()) or (not exact and style.casefold() in line.style.casefold()):
+        line.text = f"{{{tag}}}{line.text}"
+        line.style = default_style
 
 
 def unfuck_bd_dx(lines:LINES) -> LINES:
     """
     Changes the styles of BD DX, BD Top DX, etc. to Default and Signs and adds the needed tags.
     
-    Make sure the Default and Signs styles exist.
+    Make sure the styles "Default" and "Signs" exist.
     
     Subs that use this style can be already fucked up (sometimes CR converts them to use Default style without adding an tags, sometimes script_res is 360p, sometimes 1080p and pos values don't have to match the resolution).
     """
@@ -74,6 +69,7 @@ def unfuck_bd_dx(lines:LINES) -> LINES:
 
 
 def remove_credits(lines:LINES) -> LINES|None:
+    # Careful with stuff that could delete dialogue
     credits = [
             'Übersetzung:',
             'Spotting:',
@@ -81,7 +77,9 @@ def remove_credits(lines:LINES) -> LINES|None:
             'Typesetting:',
             'Qualitätskontrolle:',
             'Projektleitung:',
-            "ToonsHub"
+            "ToonsHub",
+            "Subtitle Timing",
+            "Editing & Typesetting",  # some English subtitle credits will be missed if they are in seperate lines
         ]
     removed_lines = []
     for line in lines:
