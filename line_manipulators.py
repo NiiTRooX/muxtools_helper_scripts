@@ -78,6 +78,7 @@ def remove_credits(lines:LINES) -> LINES|None:
             'Qualitätskontrolle:',
             'Projektleitung:',
             "ToonsHub",
+            "KawaSubs",
             "Subtitle Timing",
             "Editing & Typesetting",  # some English subtitle credits will be missed if they are in seperate lines
         ]
