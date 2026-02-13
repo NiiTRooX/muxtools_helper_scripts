@@ -125,11 +125,25 @@ def all_subs_from_mkv(file:PathLike, preserve_delay: bool = False) -> list[SubFi
     WIP
     
     Extract all subtitles with language and title attributes.
+    
+    language is 3 letter code (ISO 639-2) and always present.
+    
+    language_ietf (BCP 47) is the one that can have a dash and might not be present for older stuff.
+    
+    Example usage:
+        ```py
+        subs = all_subs_from_mkv(file)
+        if subs[0].language == "eng":
+            pass
+        subs[1].to_track(subs[1].title, lang=subs[1].language_ietf)
+        ```
     """
     # TODO I'm not happy with the language
-    # maybe use language for comparing with standardize_tag()
-    # and language_ietf for setting the language tag of the track
-    #? is language_ietf always present?
+    # maybe use language for comparing and language_ietf for setting the language tag of the track
+    # language is 3 letter code (ISO 639-2) and always present
+    # language_ietf (BCP 47) is the one that can have a dash and might not be present for older stuff
+    # matroska spec says 3 letter code should be ignored if ietf is present
+    #? standardize_tag() for easier comparisons?
     caller = "all_subs_srom_mkv"
     file = ensure_path_exists(file, caller)
     parsed = ParsedFile.from_file(file, caller)
@@ -138,7 +152,7 @@ def all_subs_from_mkv(file:PathLike, preserve_delay: bool = False) -> list[SubFi
     for track in parsed_tracks:
         subfile = SubFileExtended.from_mkv(file, track=track.relative_index, preserve_delay=preserve_delay)
         subfile.title = track.title
-        # Language object for fancy langcodes stuff
+        # turn into Language object?
         subfile.language = track.language
         subfile.language_ietf = track.raw_mkvmerge.properties.language_ietf
         subfile.is_default = track.is_default
