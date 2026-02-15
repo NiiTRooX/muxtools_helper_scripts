@@ -5,7 +5,7 @@ from collections.abc import Callable
 import re
 
 
-__all__ = ["unfuck_bd_dx", "remove_credits", "strip_weird_unicode", "replace_font_for_glyphs", "fix_missing_glyphs", "replace_substr", "replace_style"]
+__all__ = ["unfuck_bd_dx", "remove_credits", "strip_weird_unicode", "replace_font_for_glyphs", "fix_missing_glyphs", "replace_substr", "replace_style", "change_style_for_actor"]
 
 
 def _replace_style_with_tag(line:_Line, style:str, tag:str, exact:bool, default_style:str="Default") -> None:
@@ -165,6 +165,7 @@ def fix_missing_glyphs(lines:LINES) -> LINES:
 def replace_substr(old:str, new:str, styles:list[str]=None) -> Callable[[LINES], LINES]:
     """
     Replaces every occurence of a string with another.
+    
     Returns a function usable with .manipulate_lines().
     """
     if type(styles) == str:
@@ -181,6 +182,7 @@ def replace_substr(old:str, new:str, styles:list[str]=None) -> Callable[[LINES],
 def replace_style(old:str, new:str) -> Callable[[LINES], LINES]:
     """
     Replaces a every occurence of a style with another.
+    
     Returns a function usable with .manipulate_lines().
     """
     def _replace_style(lines:LINES) -> LINES:
@@ -189,3 +191,26 @@ def replace_style(old:str, new:str) -> Callable[[LINES], LINES]:
                 line.style = new
         return lines
     return _replace_style
+
+
+def change_style_for_actor(actor:str|list[str], old_style:str|list[str]|None, new_style:str) -> Callable[[LINES], LINES]:
+    """
+    Changes the style for a specific actor name e.g. sign.
+    
+    Returns a function usable with .manipulate_lines().
+    
+    Args:
+        actor (str | list[str]): The actor name(s). Caseinsensitive.
+        old_style (str | list[str] | None): The old style(s) to match. Set to None to ignore.
+        new_style (str): The style name used as the replacement.
+    """
+    if old_style and isinstance(old_style, str):
+        old_style = [old_style]
+    if isinstance(actor, str):
+        actor = [actor]
+    def _change_style_for_actor(lines:LINES) -> LINES:
+        for line in lines:
+            if not old_style or (line.style.casefold() in [style.casefold() for style in old_style]):
+                if line.name.casefold() in [actr.casefold() for actr in actor]:
+                    line.style = new_style
+    return _change_style_for_actor
