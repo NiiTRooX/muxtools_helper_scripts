@@ -1,6 +1,6 @@
 from muxtools import ParsedFile, SubFile, ASSHeader, Premux, PathLike, GlobSearch, TrackType, ensure_path_exists
 from .presets import GANDHI_PRESET, SIGNS_PRESET
-from .line_manipulators import unfuck_bd_dx, strip_weird_unicode, fix_missing_glyphs
+from .line_manipulators import unfuck_bd_dx, strip_weird_unicode, fix_missing_glyphs, change_style_for_actor
 from .line_manipulators import remove_credits as rmv_credits
 from ass import Style
 
@@ -23,6 +23,21 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
     Returns:
         SubFile: The processed and restyled subtitle file.
     """
+    
+    # inefficient
+    main2 = get_style(subfile, "main")
+    default2 = get_style(subfile, "default")
+    bc2 = get_style(subfile, "bottomcenter")
+    if main2:
+        main2.name = "signs2"
+        subfile.manipulate_lines(change_style_for_actor(["sign", "On-screen"], old_style="main", new_style="signs2")).restyle(main2, adjust_styles=False)
+    if default2:
+        default2.name = "signs3"
+        subfile.manipulate_lines(change_style_for_actor(["sign", "On-screen"], old_style="default", new_style="signs3")).restyle(default2, adjust_styles=False)
+    if bc2:
+        bc2.name = "signs4"
+        subfile.manipulate_lines(change_style_for_actor(["sign", "On-screen"], old_style="bottomcenter", new_style="signs4")).restyle(bc2, adjust_styles=False)
+    
     subfile = subfile\
         .set_headers((ASSHeader.LayoutResX, 640), (ASSHeader.LayoutResY, 360), (ASSHeader.ScaledBorderAndShadow, True), (ASSHeader.YCbCr_Matrix, "TV.709"))\
         .unfuck_cr(dialogue_styles=["main", "default", "narrator", "narration", "bottomcenter"], alt_styles=["alt", "overlap"])\
