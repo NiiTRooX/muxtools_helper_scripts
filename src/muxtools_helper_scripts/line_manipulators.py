@@ -1,11 +1,13 @@
 # functions meant to be used with manipulate_lines()
+from datetime import timedelta
+from fractions import Fraction
 from muxtools.subtitle.sub import LINES
 from muxtools.subtitle.basesub import _Line
 from collections.abc import Callable
 import re
 
 
-__all__ = ["unfuck_bd_dx", "remove_credits", "strip_weird_unicode", "replace_font_for_glyphs", "fix_missing_glyphs", "replace_substr", "replace_style", "change_style_for_actor"]
+__all__ = ["unfuck_bd_dx", "remove_credits", "strip_weird_unicode", "replace_font_for_glyphs", "fix_missing_glyphs", "replace_substr", "replace_style", "change_style_for_actor", "trim_subs"]
 
 
 def _replace_style_with_tag(line:_Line, style:str, tag:str, exact:bool, default_style:str="Default") -> None:
@@ -214,3 +216,32 @@ def change_style_for_actor(actor:str|list[str], old_style:str|list[str]|None, ne
                 if line.name.casefold() in [actr.casefold() for actr in actor]:
                     line.style = new_style
     return _change_style_for_actor
+
+
+def trim_subs(lower_bound:int|None=None, upper_bound:int|None=None, framerate:Fraction|float = Fraction(24000, 1001)) -> Callable[[LINES], LINES]:
+    """
+    Trim subtitles. Removes lines that are outside the bounds.
+    Trims lines that extend past it.
+    
+    Returns a function usable with .manipulate_lines().
+    """
+    #TODO look at timesource and timescale
+    lower_bound = timedelta(seconds=float(lower_bound / framerate)) if lower_bound else None
+    upper_bound = timedelta(seconds=float(upper_bound / framerate)) if upper_bound else None
+
+    def _trim_subs(lines:LINES):
+        removed_lines = []
+        for line in lines:
+            if upper_bound and ((line.start - upper_bound) > timedelta()):
+                removed_lines.append(line)
+            if lower_bound and ((lower_bound - line.end) > timedelta()):
+                removed_lines.append(line)
+        for line in removed_lines:
+            lines.remove(line)
+        # combining both loops would be better
+        for line in lines:
+            if upper_bound and ((line.end - upper_bound) > timedelta()):
+                line.end = upper_bound + timedelta(milliseconds=1000/framerate/2)
+            if lower_bound and ((lower_bound - line.start) > timedelta()):
+                line.start = lower_bound - timedelta(milliseconds=1000/framerate/2)
+    return _trim_subs
