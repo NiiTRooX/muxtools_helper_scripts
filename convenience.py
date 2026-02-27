@@ -28,15 +28,16 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
     main2 = get_style(subfile, "main")
     default2 = get_style(subfile, "default")
     bc2 = get_style(subfile, "bottomcenter")
+    sign_actors = ["sign", "On-screen", "title"]
     if main2:
         main2.name = "signs2"
-        subfile.manipulate_lines(change_style_for_actor(["sign", "On-screen"], old_style="main", new_style="signs2")).restyle(main2, adjust_styles=False)
+        subfile.manipulate_lines(change_style_for_actor(sign_actors, old_style="main", new_style="signs2")).restyle(main2, adjust_styles=False)
     if default2:
         default2.name = "signs3"
-        subfile.manipulate_lines(change_style_for_actor(["sign", "On-screen"], old_style="default", new_style="signs3")).restyle(default2, adjust_styles=False)
+        subfile.manipulate_lines(change_style_for_actor(sign_actors, old_style="default", new_style="signs3")).restyle(default2, adjust_styles=False)
     if bc2:
         bc2.name = "signs4"
-        subfile.manipulate_lines(change_style_for_actor(["sign", "On-screen"], old_style="bottomcenter", new_style="signs4")).restyle(bc2, adjust_styles=False)
+        subfile.manipulate_lines(change_style_for_actor(sign_actors, old_style="bottomcenter", new_style="signs4")).restyle(bc2, adjust_styles=False)
     
     subfile = subfile\
         .set_headers((ASSHeader.LayoutResX, 640), (ASSHeader.LayoutResY, 360), (ASSHeader.ScaledBorderAndShadow, True), (ASSHeader.YCbCr_Matrix, "TV.709"))\
