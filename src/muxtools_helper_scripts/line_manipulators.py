@@ -70,7 +70,7 @@ def unfuck_bd_dx(lines:LINES) -> LINES:
     return lines
 
 
-def remove_credits(lines:LINES) -> LINES|None:
+def remove_credits(lines:LINES) -> LINES:
     # Careful with stuff that could delete dialogue
     credits = [
             'Übersetzung:',

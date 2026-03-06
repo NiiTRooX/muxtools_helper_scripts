@@ -95,7 +95,7 @@ def video_track2(file:PathLike|GlobSearch, name:str="", lang:str="ja", default:b
     return premux
 
 
-def get_sub_track(file:PathLike, name:str|None=None, lang:str|None=None, is_forced:bool=False, is_default:bool|None=None, preserve_delay:bool=False, quiet:bool=True) -> SubFile | None:
+def get_sub_track(file:PathLike, name:str|None=None, lang:str|None=None, is_forced:bool=False, is_default:bool|None=None, preserve_delay:bool=False, quiet:bool=True) -> SubFile:
     """
     Return a SubFile object of the first matched track.
 
