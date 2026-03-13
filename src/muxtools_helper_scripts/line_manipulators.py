@@ -241,7 +241,7 @@ def trim_subs(lower_bound:int|None=None, upper_bound:int|None=None, framerate:Fr
         # combining both loops would be better
         for line in lines:
             if upper_bound and ((line.end - upper_bound) > timedelta()):
-                line.end = upper_bound + timedelta(milliseconds=1000/framerate/2)
+                line.end = upper_bound + timedelta(milliseconds=float(1000/framerate/2))
             if lower_bound and ((lower_bound - line.start) > timedelta()):
-                line.start = lower_bound - timedelta(milliseconds=1000/framerate/2)
+                line.start = lower_bound - timedelta(milliseconds=float(1000/framerate/2))
     return _trim_subs
