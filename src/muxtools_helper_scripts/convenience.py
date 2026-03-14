@@ -8,8 +8,8 @@ from ass import Style
 __all__ = ["restyle_cr", "restyle_bd_dx", "get_style", "video_track2", "get_sub_track", "all_subs_from_mkv"]
 
 
-def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=True, styles:Style|list[Style]=GANDHI_PRESET, replace_glyph_font:bool=False) -> SubFile:
-    """
+def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=True, styles:Style|list[Style]=GANDHI_PRESET, replace_glyph_font:bool=False, italicize_narrator:bool=False) -> SubFile:
+    r"""
     This function applies a standard set of ASS header values, converts top styles into tags, and reapplies one or more target styles.
     Optional post-processing steps allow removal of credit lines, macron stripping, and glyph font substitution for missing characters.
 
@@ -19,6 +19,7 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
         purge_macrons (bool, optional): Whether to remove macrons from dialogue text. Defaults to True.
         styles (Style | list[Style], optional): Style or list of styles to apply to the subtitle file. Defaults to `GANDHI_PRESET`.
         replace_glyph_font (bool, optional): Whether to replace fonts to fix missing glyphs. Defaults to False.
+        italicize_narrator (bool, optional): Whether to italize lines that use a narrator style. Defaults to False. If it doesn't match the original narrator style \i tags to emphasize words will be broken.
 
     Returns:
         SubFile: The processed and restyled subtitle file.
@@ -41,9 +42,13 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
     
     subfile = subfile\
         .set_headers((ASSHeader.LayoutResX, 640), (ASSHeader.LayoutResY, 360), (ASSHeader.ScaledBorderAndShadow, True), (ASSHeader.YCbCr_Matrix, "TV.709"))\
-        .unfuck_cr(dialogue_styles=["main", "default", "narrator", "narration", "bottomcenter"], alt_styles=["alt", "overlap"])\
-        .manipulate_lines(strip_weird_unicode)\
-        .restyle(styles)
+        .manipulate_lines(strip_weird_unicode)
+    if italicize_narrator:
+        subfile = subfile.unfuck_cr(dialogue_styles=["main", "default", "bottomcenter"], alt_styles=["alt", "overlap"], italics_styles=["italics", "internal", "narrator", "narration"])
+    else:
+        subfile = subfile.unfuck_cr(dialogue_styles=["main", "default", "narrator", "narration", "bottomcenter"], alt_styles=["alt", "overlap"])
+
+    subfile = subfile.restyle(styles)
     if remove_credits:
         subfile = subfile.manipulate_lines(rmv_credits)
     if purge_macrons:
