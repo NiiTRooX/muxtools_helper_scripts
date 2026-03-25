@@ -5,6 +5,7 @@ from muxtools.subtitle.sub import LINES
 from muxtools.subtitle.basesub import _Line
 from collections.abc import Callable
 import re
+from ass_tag_analyzer import parse_line, ass_item_to_text, AssValidTagItalic
 
 
 __all__ = ["unfuck_bd_dx", "remove_credits", "strip_weird_unicode", "replace_font_for_glyphs", "fix_missing_glyphs", "replace_substr", "replace_style", "change_style_for_actor", "trim_subs"]
@@ -215,6 +216,7 @@ def change_style_for_actor(actor:str|list[str], old_style:str|list[str]|None, ne
             if not old_style or (line.style.casefold() in [style.casefold() for style in old_style]):
                 if line.name.casefold() in [actr.casefold() for actr in actor]:
                     line.style = new_style
+        return lines
     return _change_style_for_actor
 
 
@@ -229,7 +231,7 @@ def trim_subs(lower_bound:int|None=None, upper_bound:int|None=None, framerate:Fr
     lower_bound = timedelta(seconds=float(lower_bound / framerate)) if lower_bound else None
     upper_bound = timedelta(seconds=float(upper_bound / framerate)) if upper_bound else None
 
-    def _trim_subs(lines:LINES):
+    def _trim_subs(lines:LINES) -> LINES:
         removed_lines = []
         for line in lines:
             if upper_bound and ((line.start - upper_bound) > timedelta()):
@@ -244,4 +246,32 @@ def trim_subs(lower_bound:int|None=None, upper_bound:int|None=None, framerate:Fr
                 line.end = upper_bound + timedelta(milliseconds=float(1000/framerate/2))
             if lower_bound and ((lower_bound - line.start) > timedelta()):
                 line.start = lower_bound - timedelta(milliseconds=float(1000/framerate/2))
+        return lines
     return _trim_subs
+
+
+def swap_italic_tags(styles:str|list[str]|None=None, actors:str|list[str]|None=None) -> Callable[[LINES], LINES]:
+    r"""
+    Swaps \i1 and \i0.  
+    Returns a function usable with .manipulate_lines().
+    
+    Args:
+        styles (str | list[str] | None): Only work on lines that match the style name(s). Caseinsensitive. Set to None to ignore.
+        actors (str | list[str] | None): Only work on lines that match the actor name(s). Caseinsensitive. Set to None to ignore.
+    """
+    styles = [styles] if isinstance(styles, str) else styles
+    actors = [actors] if isinstance(actors, str) else actors
+        
+    def _swap_italic_tags(lines:LINES) -> LINES:
+        for line in lines:
+            if styles and line.style.casefold() in styles:
+                continue
+            if actors and line.name.casefold() in actors:
+                continue
+            items = parse_line(line)
+            for item in items:
+                if isinstance(item, AssValidTagItalic):
+                    item.value = 0 if item.value == 1 else 1
+            line = ass_item_to_text(items)
+        return lines
+    return _swap_italic_tags
