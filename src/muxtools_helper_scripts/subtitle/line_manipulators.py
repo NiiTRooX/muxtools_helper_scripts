@@ -8,7 +8,7 @@ import re
 from ass_tag_analyzer import parse_line, ass_item_to_text, AssValidTagItalic
 
 
-__all__ = ["unfuck_bd_dx", "remove_credits", "strip_weird_unicode", "replace_font_for_glyphs", "fix_missing_glyphs", "replace_substr", "replace_style", "change_style_for_actor", "trim_subs"]
+__all__ = ["unfuck_bd_dx", "remove_credits", "strip_weird_unicode", "replace_font_for_glyphs", "fix_missing_glyphs", "replace_substr", "replace_style", "change_style_for_actor", "trim_subs", "swap_italic_tags"]
 
 
 def _replace_style_with_tag(line:_Line, style:str, tag:str, exact:bool, default_style:str="Default") -> None:
@@ -264,14 +264,14 @@ def swap_italic_tags(styles:str|list[str]|None=None, actors:str|list[str]|None=N
         
     def _swap_italic_tags(lines:LINES) -> LINES:
         for line in lines:
-            if styles and line.style.casefold() in styles:
+            if styles and line.style.casefold() not in styles:
                 continue
-            if actors and line.name.casefold() in actors:
+            if actors and line.name.casefold() not in actors:
                 continue
-            items = parse_line(line)
+            items = parse_line(line.text)
             for item in items:
                 if isinstance(item, AssValidTagItalic):
-                    item.value = 0 if item.value == 1 else 1
-            line = ass_item_to_text(items)
+                    item.enabled = not item.enabled
+            line.text = ass_item_to_text(items)
         return lines
     return _swap_italic_tags
