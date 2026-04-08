@@ -28,8 +28,8 @@ gandhi_uw_default = Style(
     fontsize=57.0,  # still slightly larger than the normal gandhi preset on 16:9
     outline=2.7,
     shadow=1.125,
-    margin_l=220,  # even bigger margins to compensate smaller size?
-    margin_r=220,
+    margin_l=300,
+    margin_r=300,
     margin_v=40,
     **default_style_args,
 )
