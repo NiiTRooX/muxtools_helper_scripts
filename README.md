@@ -1,6 +1,6 @@
 # muxtools_helper_scripts
 
-Useful functions to use with Muxtools
+Useful functions to complement Muxtools
 
 Expect breaking changes.
 
