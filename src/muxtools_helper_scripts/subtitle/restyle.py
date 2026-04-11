@@ -30,6 +30,7 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
     main2 = get_style(subfile, "main")
     default2 = get_style(subfile, "default")
     bc2 = get_style(subfile, "bottomcenter")
+    ot2 = get_style(subfile, "on top")
     sign_actors = ["sign", "On-screen", "title"]
     if main2:
         main2.name = "signs2"
@@ -40,6 +41,9 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
     if bc2:
         bc2.name = "signs4"
         subfile.manipulate_lines(change_style_for_actor(sign_actors, old_style="bottomcenter", new_style="signs4")).restyle(bc2, adjust_styles=False)
+    if ot2:
+        ot2.name = "signs5"
+        subfile.manipulate_lines(change_style_for_actor(sign_actors, old_style="on top", new_style="signs5")).restyle(ot2, adjust_styles=False)
     
     subfile = subfile\
         .set_headers((ASSHeader.LayoutResX, 640), (ASSHeader.LayoutResY, 360), (ASSHeader.ScaledBorderAndShadow, True), (ASSHeader.YCbCr_Matrix, "TV.709"))\
