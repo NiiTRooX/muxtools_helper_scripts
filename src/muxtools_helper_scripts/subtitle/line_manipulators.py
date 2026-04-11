@@ -207,15 +207,16 @@ def change_style_for_actor(actor:str|list[str], old_style:str|list[str]|None, ne
         old_style (str | list[str] | None): The old style(s) to match. Set to None to ignore.
         new_style (str): The style name used as the replacement.
     """
-    if old_style and isinstance(old_style, str):
+    if isinstance(old_style, str):
         old_style = [old_style]
     if isinstance(actor, str):
         actor = [actor]
     def _change_style_for_actor(lines:LINES) -> LINES:
         for line in lines:
-            if not old_style or (line.style.casefold() in [style.casefold() for style in old_style]):
-                if line.name.casefold() in [actr.casefold() for actr in actor]:
-                    line.style = new_style
+            style_match = line.style.casefold() in [style.casefold() for style in old_style]
+            actor_match = line.name.casefold() in [actr.casefold() for actr in actor]
+            if actor_match and (not old_style or style_match):
+                line.style = new_style
         return lines
     return _change_style_for_actor
 
