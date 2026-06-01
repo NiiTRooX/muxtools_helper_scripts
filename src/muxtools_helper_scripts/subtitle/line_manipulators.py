@@ -84,6 +84,8 @@ def remove_credits(lines:LINES) -> LINES:
             "KawaSubs",
             "Subtitle Timing",
             "Editing & Typesetting",  # some English subtitle credits will be missed if they are in seperate lines
+            "Translation:",
+            "Translation Check:",
         ]
     removed_lines = []
     for line in lines:
