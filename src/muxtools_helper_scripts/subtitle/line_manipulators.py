@@ -100,7 +100,9 @@ def remove_credits(lines:LINES) -> LINES:
 def strip_weird_unicode(lines:LINES) -> LINES:
     unicode_list = [u"\u200e", u"\u200b", u"\u05B9"]
     replace_list = [(u"\u2011", '-'),
-                    (u"\uFF01", "!")]
+                    (u"\uFF01", "!"),
+                    (u"\u3000", r"\h\h\h")  # needs fact check (tested on Times New Roman Bold)
+                    ]
     for line in lines:
         for unicode in unicode_list:
             line.text = line.text.replace(unicode, "")
