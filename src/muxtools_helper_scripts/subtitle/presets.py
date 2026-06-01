@@ -3,7 +3,7 @@ from ass.line import Style
 from ass.data import Color
 
 
-__all__ = ["GANDHI_PRESET", "GANDHI_UW_PRESET", "SIGNS_PRESET", "NOTO_PRESET", "JPN_PRESET", "KOR_PRESET", "SC_PRESET", "TC_PRESET", "THAI_PRESET", "ARAB_PRESET"]
+__all__ = ["GANDHI_PRESET", "GANDHI_UW_PRESET", "SIGNS_PRESET", "NOTO_PRESET", "JPN_PRESET", "KOR_PRESET", "SC_PRESET", "TC_PRESET", "THAI_PRESET", "ARAB_PRESET", "NOTO_SEMI_PRESET"]
 
 
 # slightly smaller left and right margins to prevent 3-liners and I don't mind it extending further
@@ -103,6 +103,20 @@ noto_default = Style(
 )
 
 NOTO_PRESET = [noto_default, *get_complimenting_styles(noto_default)]
+
+noto_semi_default = Style(
+    name="Default",
+    fontname="Noto Sans SemBd",
+    fontsize=75.0,
+    outline=3.6,
+    shadow=1.5,
+    margin_l=150,
+    margin_r=150,
+    margin_v=55,
+    **default_style_args,
+)
+
+NOTO_SEMI_PRESET = [noto_semi_default, *get_complimenting_styles(noto_default)]
 
 jpn_default = Style(
     name="Default",
