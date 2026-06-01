@@ -1,7 +1,9 @@
-from muxtools import ParsedFile, PathLike, SubFile, TrackType, ensure_path_exists
+from typing import Any
+from muxtools import ParsedFile, PathLike, SubFile, TrackType, ensure_path_exists, info
+import ass, io
 
 
-__all__ = ["get_sub_track", "all_subs_from_mkv"]
+__all__ = ["get_sub_track", "all_subs_from_mkv", "replace_text_in_subfile"]
 
 
 def get_sub_track(file:PathLike, name:str|None=None, lang:str|None=None, is_forced:bool=False, is_default:bool|None=None, preserve_delay:bool=False, quiet:bool=True, **kwargs: Any) -> SubFile:
@@ -82,3 +84,18 @@ def all_subs_from_mkv(file:PathLike, preserve_delay: bool = False) -> list[SubFi
         subfile.is_forced = track.is_forced
         sub_files.append(subfile)
     return sub_files
+
+
+def replace_text_in_subfile(file:PathLike, old:str, new:str) -> None:
+    """
+    Useful to fix a malformed header.
+    """
+
+    with open(file, "r", encoding="utf-8-sig") as f:
+        raw = f.read().replace(old, new)
+    
+    doc = ass.parse(io.StringIO(raw))
+
+    with open(file, "w", encoding="utf-8-sig") as f:
+        doc.dump_file(f)
+    
