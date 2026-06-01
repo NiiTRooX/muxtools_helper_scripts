@@ -4,7 +4,7 @@ from muxtools import ParsedFile, PathLike, SubFile, TrackType, ensure_path_exist
 __all__ = ["get_sub_track", "all_subs_from_mkv"]
 
 
-def get_sub_track(file:PathLike, name:str|None=None, lang:str|None=None, is_forced:bool=False, is_default:bool|None=None, preserve_delay:bool=False, quiet:bool=True) -> SubFile:
+def get_sub_track(file:PathLike, name:str|None=None, lang:str|None=None, is_forced:bool=False, is_default:bool|None=None, preserve_delay:bool=False, quiet:bool=True, **kwargs: Any) -> SubFile:
     """
     Return a SubFile object of the first matched track.
 
@@ -17,6 +17,7 @@ def get_sub_track(file:PathLike, name:str|None=None, lang:str|None=None, is_forc
         is_forced (bool): Forced flag to match.
         is_default (bool | None): Default flag to match. Ignored if set to None.
         preserve_delay (bool): Whether to preserve the existing container delay.
+        kwargs (Any): Other args to pass to `from_srt` if trying to extract srt subtitles
 
     Returns:
         SubFile: The first track that matches the given criteria.
@@ -29,12 +30,9 @@ def get_sub_track(file:PathLike, name:str|None=None, lang:str|None=None, is_forc
     else:
         condition = lambda track: track.is_forced == is_forced
     parsed_track = parsed.find_tracks(name=name, lang=lang, type=TrackType.SUB, error_if_empty=True, caller=caller, custom_condition=condition)[0]
-    if not quiet:
-        if parsed_track:
-            print(f"Matched subtitle track {parsed_track.relative_index} with title: {parsed_track.title}")
-        else:
-            print("No matches found")
-    return SubFile.from_mkv(file, track=parsed_track.relative_index, preserve_delay=preserve_delay, quiet=quiet)
+    if not quiet and parsed_track:
+        info(f"Matched subtitle track {parsed_track.relative_index} with title: {parsed_track.title}", get_sub_track)
+    return SubFile.from_mkv(file, track=parsed_track.relative_index, preserve_delay=preserve_delay, quiet=quiet, **kwargs)
 
 
 class SubFileExtended(SubFile):
