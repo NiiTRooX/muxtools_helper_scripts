@@ -109,7 +109,7 @@ def strip_weird_unicode(lines:LINES) -> LINES:
     return lines
 
 
-def replace_font_for_glyphs(glyphs:list[str], replacement_font:str, styles:list[str]|None=None) -> Callable[[LINES], LINES]:
+def replace_font_for_glyphs(glyphs:list[str]|str, replacement_font:str, styles:list[str]|None=None) -> Callable[[LINES], LINES]:
     r"""
     Replaces the font of glyphs.
     After the glyph the font is set back to the last \fn tag or style default if it's not present.
