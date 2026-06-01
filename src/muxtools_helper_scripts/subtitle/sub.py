@@ -56,12 +56,12 @@ def all_subs_from_mkv(file:PathLike, preserve_delay: bool = False) -> list[SubFi
     language_ietf (BCP 47) is the one that can have a dash and might not be present for older stuff.
     
     Example usage:
-        ```py
+    ```
         subs = all_subs_from_mkv(file)
         if subs[0].language == "eng":
             pass
         subs[1].to_track(subs[1].title, lang=subs[1].language_ietf)
-        ```
+    ```
     """
     # TODO I'm not happy with the language
     # maybe use language for comparing and language_ietf for setting the language tag of the track
