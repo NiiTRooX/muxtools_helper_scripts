@@ -1,4 +1,4 @@
-from muxtools import ParsedFile, SubFile, ASSHeader, Premux, PathLike, GlobSearch, TrackType, ensure_path_exists
+from muxtools import SubFile, ASSHeader
 from .style import get_style
 from .presets import GANDHI_PRESET, SIGNS_PRESET
 from .line_manipulators import unfuck_bd_dx, strip_weird_unicode, fix_missing_glyphs, change_style_for_actor
@@ -9,7 +9,7 @@ from ass import Style
 __all__ = ["restyle_cr", "restyle_bd_dx"]
 
 
-def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=True, styles:Style|list[Style]=GANDHI_PRESET, replace_glyph_font:bool=False, italicize_narrator:bool=False) -> SubFile:
+def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=True, styles:Style|list[Style]=GANDHI_PRESET, replace_glyph_font:bool=False, italicize_narrator:bool=False, set_layoutres:bool=True, set_YCbCr_Matrix:bool=True) -> SubFile:
     r"""
     This function applies a standard set of ASS header values, converts top styles into tags, and reapplies one or more target styles.
     Optional post-processing steps allow removal of credit lines, macron stripping, and glyph font substitution for missing characters.
@@ -25,7 +25,7 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
     Returns:
         SubFile: The processed and restyled subtitle file.
     """
-    
+
     # inefficient
     main2 = get_style(subfile, "main")
     default2 = get_style(subfile, "default")
@@ -44,10 +44,13 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
     if ot2:
         ot2.name = "signs5"
         subfile.manipulate_lines(change_style_for_actor(sign_actors, old_style="on top", new_style="signs5")).restyle(ot2, adjust_styles=False)
-    
-    subfile = subfile\
-        .set_headers((ASSHeader.LayoutResX, 640), (ASSHeader.LayoutResY, 360), (ASSHeader.ScaledBorderAndShadow, True), (ASSHeader.YCbCr_Matrix, "TV.709"))\
-        .manipulate_lines(strip_weird_unicode)
+
+    subfile = subfile.set_headers((ASSHeader.ScaledBorderAndShadow, True)).manipulate_lines(strip_weird_unicode)
+    if set_layoutres:
+        subfile = subfile.set_headers((ASSHeader.LayoutResX, 640), (ASSHeader.LayoutResY, 360))
+    if set_YCbCr_Matrix:
+        subfile = subfile.set_headers((ASSHeader.YCbCr_Matrix, "TV.709"))
+
     if italicize_narrator:
         subfile = subfile.unfuck_cr(dialogue_styles=["main", "default", "bottomcenter"], alt_styles=["alt", "overlap"], italics_styles=["italics", "internal", "narrator", "narration"])
     else:
@@ -65,7 +68,8 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
 
 def restyle_bd_dx(subfile:SubFile, styles:Style|list[Style]=GANDHI_PRESET) -> SubFile:
     r"""    
-    Subs that use this style can be already fucked up (sometimes CR converts them to use Default style without adding \an tags, sometimes script_res is 360p, sometimes 1080p and \pos values don't have to match the resolution).
+    Subs that use this style can be already fucked up (sometimes all styles are converted to Default style without adding \an tags, sometimes script_res is 360, sometimes 1080 and \pos values don't have to match the resolution).  
+    Wrong \pos values might be Erais fault (Erai was broken and Varyg was fine).
     """
     subfile = subfile\
         .set_headers([ASSHeader.LayoutResX, 640], [ASSHeader.LayoutResY, 360], [ASSHeader.ScaledBorderAndShadow, True], [ASSHeader.YCbCr_Matrix, "TV.709"])\

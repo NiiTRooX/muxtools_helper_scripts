@@ -80,12 +80,14 @@ def remove_credits(lines:LINES) -> LINES:
             'Typesetting:',
             'Qualitätskontrolle:',
             'Projektleitung:',
+            'Adaption:',
             "ToonsHub",
             "KawaSubs",
             "Subtitle Timing",
             "Editing & Typesetting",  # some English subtitle credits will be missed if they are in seperate lines
             "Translation:",
             "Translation Check:",
+            "Crunchyroll:",
         ]
     removed_lines = []
     for line in lines:
@@ -98,7 +100,7 @@ def remove_credits(lines:LINES) -> LINES:
 
 
 def strip_weird_unicode(lines:LINES) -> LINES:
-    unicode_list = [u"\u200e", u"\u200b", u"\u05B9"]
+    unicode_list = [u"\u200e", u"\u200b", u"\u05B9", u"\u202d", u"\ufeff", u"\u202a", u"\uFE0E"]
     replace_list = [(u"\u2011", '-'),
                     (u"\uFF01", "!"),
                     (u"\u3000", r"\h\h\h")  # needs fact check (tested on Times New Roman Bold)
@@ -123,7 +125,7 @@ def replace_font_for_glyphs(glyphs:list[str]|str, replacement_font:str, styles:l
         replacement_font (str): The font that includes the glyph(s).
         style (list[str] | None): Only replace fonts of a specific style. Set to None to ignore styles.
     """
-    if type(glyphs) == str:
+    if isinstance(glyphs, str):
         glyphs = list(glyphs)
     fn_pattern = re.compile(r'\\fn([^\\}]+)(?=[\\}])')  # this is supposed to find \fnFont that ends with '\' or '}'. Include this? ')'
     def _replace_font_for_glyph(lines:LINES) -> LINES:
@@ -162,7 +164,8 @@ def fix_missing_glyphs(lines:LINES) -> LINES:
               ('☆', "Segoe UI Symbol"),
               ('❤', "Segoe UI Symbol"),
               ('「', "Yu Gothic UI Semibold"),
-              ('」', "Yu Gothic UI Semibold")
+              ('」', "Yu Gothic UI Semibold"),
+              ('♥', "Segoe UI Symbol"), #❤︎
               ]  # add glyphs here
     for glyph, font in glyphs:
         lines = replace_font_for_glyphs(glyphs=glyph, replacement_font=font)(lines)
@@ -175,7 +178,7 @@ def replace_substr(old:str, new:str, styles:list[str]=None) -> Callable[[LINES],
     
     Returns a function usable with .manipulate_lines().
     """
-    if type(styles) == str:
+    if isinstance(styles, str):
         styles = [styles]
     
     def _replace_substr(lines:LINES) -> LINES:
