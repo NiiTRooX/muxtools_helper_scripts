@@ -100,7 +100,8 @@ def remove_credits(lines:LINES) -> LINES:
 
 
 def strip_weird_unicode(lines:LINES) -> LINES:
-    unicode_list = [u"\u200e", u"\u200b", u"\u05B9", u"\u202d", u"\ufeff", u"\u202a", u"\uFE0E"]
+    unicode_list = [u"\u200e", u"\u200b", u"\u05B9", u"\u202d", u"\ufeff", u"\u202a",
+                    u"\uFE0E", u"\uFE0F"]  # Emoji variation selector (shouldn't be stripped if the font supports it; CR uses these with fonts that don't)
     replace_list = [(u"\u2011", '-'),
                     (u"\uFF01", "!"),
                     (u"\u3000", r"\h\h\h")  # needs fact check (tested on Times New Roman Bold)
