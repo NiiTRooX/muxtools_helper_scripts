@@ -28,7 +28,8 @@ def _replace_style_with_tag(line:_Line, style:str, tag:str, exact:bool, default_
     if tag[0] != '\\':
         tag = '\\' + tag
     if (exact and style.casefold() == line.style.casefold()) or (not exact and style.casefold() in line.style.casefold()):
-        line.text = f"{{{tag}}}{line.text}"
+        if r"\an" not in line.text:
+            line.text = f"{{{tag}}}{line.text}"
         line.style = default_style
 
 
