@@ -1,9 +1,8 @@
-from muxtools.subtitle import get_complimenting_styles, default_style_args
-from ass.line import Style
 from ass.data import Color
+from ass.line import Style
+from muxtools.subtitle import default_style_args, get_complimenting_styles
 
-
-__all__ = ["GANDHI_PRESET", "GANDHI_UW_PRESET", "SIGNS_PRESET", "NOTO_PRESET", "JPN_PRESET", "KOR_PRESET", "SC_PRESET", "TC_PRESET", "THAI_PRESET", "ARAB_PRESET", "NOTO_SEMI_PRESET"]
+__all__ = ["ARAB_PRESET", "GANDHI_PRESET", "GANDHI_UW_PRESET", "JPN_PRESET", "KOR_PRESET", "NOTO_PRESET", "NOTO_SEMI_PRESET", "SC_PRESET", "SIGNS_PRESET", "TC_PRESET", "THAI_PRESET"]
 
 
 # slightly smaller left and right margins to prevent 3-liners and I don't mind it extending further

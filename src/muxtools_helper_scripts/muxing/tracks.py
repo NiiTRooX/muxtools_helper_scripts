@@ -1,6 +1,5 @@
 from muxtools import GlobSearch, PathLike, Premux
 
-
 __all__ = ["video_track2"]
 
 

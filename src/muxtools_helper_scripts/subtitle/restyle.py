@@ -1,12 +1,12 @@
-from muxtools import SubFile, ASSHeader
-from .style import get_style
-from .presets import GANDHI_PRESET, SIGNS_PRESET
-from .line_manipulators import unfuck_bd_dx, strip_weird_unicode, fix_missing_glyphs, change_style_for_actor
-from .line_manipulators import remove_credits as rmv_credits
 from ass import Style
+from muxtools import ASSHeader, SubFile
 
+from .line_manipulators import change_style_for_actor, fix_missing_glyphs, strip_weird_unicode, unfuck_bd_dx
+from .line_manipulators import remove_credits as rmv_credits
+from .presets import GANDHI_PRESET, SIGNS_PRESET
+from .style import get_style
 
-__all__ = ["restyle_cr", "restyle_bd_dx"]
+__all__ = ["restyle_bd_dx", "restyle_cr"]
 
 
 def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=True, styles:Style|list[Style]=GANDHI_PRESET, replace_glyph_font:bool=False, italicize_narrator:bool=False, set_layoutres:bool=True, set_YCbCr_Matrix:bool=True) -> SubFile:

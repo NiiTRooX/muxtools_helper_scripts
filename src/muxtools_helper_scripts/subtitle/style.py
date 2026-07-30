@@ -1,6 +1,5 @@
-from muxtools import SubFile
 from ass import Style
-
+from muxtools import SubFile
 
 __all__ = ["get_style"]
 

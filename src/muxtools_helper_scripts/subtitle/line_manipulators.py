@@ -1,14 +1,14 @@
 # functions meant to be used with manipulate_lines()
+import re
+from collections.abc import Callable
 from datetime import timedelta
 from fractions import Fraction
-from muxtools.subtitle.sub import LINES
+
+from ass_tag_analyzer import AssValidTagItalic, ass_item_to_text, parse_line
 from muxtools.subtitle.basesub import _Line
-from collections.abc import Callable
-import re
-from ass_tag_analyzer import parse_line, ass_item_to_text, AssValidTagItalic
+from muxtools.subtitle.sub import LINES
 
-
-__all__ = ["unfuck_bd_dx", "remove_credits", "strip_weird_unicode", "replace_font_for_glyphs", "fix_missing_glyphs", "replace_substr", "replace_style", "change_style_for_actor", "trim_subs", "swap_italic_tags"]
+__all__ = ["change_style_for_actor", "fix_missing_glyphs", "remove_credits", "replace_font_for_glyphs", "replace_style", "replace_substr", "strip_weird_unicode", "swap_italic_tags", "trim_subs", "unfuck_bd_dx"]
 
 
 def _replace_style_with_tag(line:_Line, style:str, tag:str, exact:bool, default_style:str="Default") -> None:
