@@ -21,6 +21,8 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
         styles (Style | list[Style], optional): Style or list of styles to apply to the subtitle file. Defaults to `GANDHI_PRESET`.
         replace_glyph_font (bool, optional): Whether to replace fonts to fix missing glyphs. Defaults to False.
         italicize_narrator (bool, optional): Whether to italize lines that use a narrator style. Defaults to False. If it doesn't match the original narrator style \i tags to emphasize words will be broken.
+        set_layoutres (bool): Sets LayoutResX to 640 and LayoutResY to 360.
+        set_YCbCr_Matrix (bool): Sets YCbCr Matrix to TV.601 if it's unset otherwise does nothing.
 
     Returns:
         SubFile: The processed and restyled subtitle file.
@@ -49,7 +51,14 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
     if set_layoutres:
         subfile = subfile.set_headers((ASSHeader.LayoutResX, 640), (ASSHeader.LayoutResY, 360))
     if set_YCbCr_Matrix:
-        subfile = subfile.set_headers((ASSHeader.YCbCr_Matrix, "TV.709"))
+        matrix = "None"
+        try:
+            matrix = subfile._read_doc().info["YCbCr Matrix"]
+        except KeyError:
+            pass
+
+        if matrix.casefold() == "none".casefold() or matrix == "":
+            subfile = subfile.set_headers((ASSHeader.YCbCr_Matrix, "TV.601"))
 
     if italicize_narrator:
         subfile = subfile.unfuck_cr(dialogue_styles=["main", "default", "bottomcenter"], alt_styles=["alt", "overlap"], italics_styles=["italics", "internal", "narrator", "narration"])
