@@ -33,7 +33,7 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
     default2 = get_style(subfile, "default")
     bc2 = get_style(subfile, "bottomcenter")
     ot2 = get_style(subfile, "on top")
-    sign_actors = ["sign", "On-screen", "title"]
+    sign_actors = ["sign", "On-screen", "title", "Text"]
     if main2:
         main2.name = "signs2"
         subfile.manipulate_lines(change_style_for_actor(sign_actors, old_style="main", new_style="signs2")).restyle(main2, adjust_styles=False)
