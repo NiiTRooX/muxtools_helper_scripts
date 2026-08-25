@@ -81,10 +81,18 @@ def restyle_bd_dx(subfile:SubFile, styles:Style|list[Style]=GANDHI_PRESET) -> Su
     Wrong \pos values might be the rippers fault or later fixed by CR (Erai was broken and Varyg was fine).
     """
     subfile = subfile\
-        .set_headers([ASSHeader.LayoutResX, 640], [ASSHeader.LayoutResY, 360], [ASSHeader.ScaledBorderAndShadow, True], [ASSHeader.YCbCr_Matrix, "TV.709"])\
+        .set_headers([ASSHeader.LayoutResX, 640], [ASSHeader.LayoutResY, 360], [ASSHeader.ScaledBorderAndShadow, True])\
         .manipulate_lines(unfuck_bd_dx)\
         .unfuck_cr()\
         .manipulate_lines(strip_weird_unicode)\
         .restyle(SIGNS_PRESET)\
         .restyle(styles)
+    matrix = "None"
+    try:
+        matrix = subfile._read_doc().info["YCbCr Matrix"]
+    except KeyError:
+        pass
+
+    if matrix.casefold() == "none".casefold() or matrix == "":
+        subfile = subfile.set_headers((ASSHeader.YCbCr_Matrix, "TV.601"))
     return subfile
