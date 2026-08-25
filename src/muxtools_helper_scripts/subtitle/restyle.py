@@ -78,7 +78,7 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
 def restyle_bd_dx(subfile:SubFile, styles:Style|list[Style]=GANDHI_PRESET) -> SubFile:
     r"""    
     Subs that use this style can be already fucked up (sometimes all styles are converted to Default style without adding \an tags, sometimes script_res is 360, sometimes 1080 and \pos values don't have to match the resolution).  
-    Wrong \pos values might be Erais fault (Erai was broken and Varyg was fine).
+    Wrong \pos values might be the rippers fault or later fixed by CR (Erai was broken and Varyg was fine).
     """
     subfile = subfile\
         .set_headers([ASSHeader.LayoutResX, 640], [ASSHeader.LayoutResY, 360], [ASSHeader.ScaledBorderAndShadow, True], [ASSHeader.YCbCr_Matrix, "TV.709"])\
