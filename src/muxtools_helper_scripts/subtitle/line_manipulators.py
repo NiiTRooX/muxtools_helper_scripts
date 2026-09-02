@@ -168,13 +168,14 @@ def fix_missing_glyphs(lines:LINES) -> LINES:
               ('「', "Yu Gothic UI Semibold"),
               ('」', "Yu Gothic UI Semibold"),
               ('♥', "Segoe UI Symbol"), #❤︎
+              ('♡', "Segoe UI Symbol"),
               ]  # add glyphs here
     for glyph, font in glyphs:
         lines = replace_font_for_glyphs(glyphs=glyph, replacement_font=font)(lines)
     return lines
 
 
-def replace_substr(old:str, new:str, styles:list[str]=None) -> Callable[[LINES], LINES]:
+def replace_substr(old:str, new:str, styles:list[str] | str | None=None) -> Callable[[LINES], LINES]:
     """
     Replaces every occurence of a string with another.
     
