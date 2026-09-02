@@ -105,7 +105,7 @@ NOTO_PRESET = [noto_default, *get_complimenting_styles(noto_default)]
 
 noto_semi_default = Style(
     name="Default",
-    fontname="Noto Sans SemBd",
+    fontname="Noto Sans SemiBold",
     fontsize=75.0,
     outline=3.6,
     shadow=1.5,
@@ -147,7 +147,7 @@ KOR_PRESET = [kor_default, *get_complimenting_styles(kor_default)]
 
 sc_default = Style(
     name="Default",
-    fontname="Noto Sans SC",
+    fontname="Noto Sans CJK SC Medium",
     fontsize=75.0,
     outline=3.6,
     shadow=1.5,
@@ -156,12 +156,13 @@ sc_default = Style(
     margin_v=55,
     **default_style_args,
 )
+sc_default.bold = False
 
 SC_PRESET = [sc_default, *get_complimenting_styles(sc_default)]
 
 tc_default = Style(
     name="Default",
-    fontname="Noto Sans TC",
+    fontname="Noto Sans CJK TC Medium",
     fontsize=75.0,
     outline=3.6,
     shadow=1.5,
@@ -170,12 +171,13 @@ tc_default = Style(
     margin_v=55,
     **default_style_args,
 )
+tc_default.bold = False
 
 TC_PRESET = [tc_default, *get_complimenting_styles(tc_default)]
 
 thai_default = Style(
     name="Default",
-    fontname="Noto Sans Thai",
+    fontname="Noto Sans Thai Medium",
     fontsize=75.0,
     outline=3.6,
     shadow=1.5,
@@ -184,6 +186,7 @@ thai_default = Style(
     margin_v=55,
     **default_style_args,
 )
+thai_default.bold = False
 
 THAI_PRESET = [thai_default, *get_complimenting_styles(thai_default)]
 
