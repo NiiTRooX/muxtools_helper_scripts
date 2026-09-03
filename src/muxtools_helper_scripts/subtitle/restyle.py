@@ -1,10 +1,10 @@
 from ass import Style
 from muxtools import ASSHeader, SubFile
 
-from .line_manipulators import change_style_for_actor, fix_missing_glyphs, strip_weird_unicode, unfuck_bd_dx
+from .line_manipulators import fix_missing_glyphs, strip_weird_unicode, unfuck_bd_dx
 from .line_manipulators import remove_credits as rmv_credits
 from .presets import GANDHI_PRESET, SIGNS_PRESET
-from .style import get_style
+from .sub import fix_dialog_signs
 
 __all__ = ["restyle_bd_dx", "restyle_cr"]
 
@@ -28,24 +28,7 @@ def restyle_cr(subfile:SubFile, remove_credits:bool=True, purge_macrons:bool=Tru
         SubFile: The processed and restyled subtitle file.
     """
 
-    # inefficient
-    main2 = get_style(subfile, "main")
-    default2 = get_style(subfile, "default")
-    bc2 = get_style(subfile, "bottomcenter")
-    ot2 = get_style(subfile, "on top")
-    sign_actors = ["sign", "On-screen", "title", "Text"]
-    if main2:
-        main2.name = "signs2"
-        subfile.manipulate_lines(change_style_for_actor(sign_actors, old_style="main", new_style="signs2")).restyle(main2, adjust_styles=False)
-    if default2:
-        default2.name = "signs3"
-        subfile.manipulate_lines(change_style_for_actor(sign_actors, old_style="default", new_style="signs3")).restyle(default2, adjust_styles=False)
-    if bc2:
-        bc2.name = "signs4"
-        subfile.manipulate_lines(change_style_for_actor(sign_actors, old_style="bottomcenter", new_style="signs4")).restyle(bc2, adjust_styles=False)
-    if ot2:
-        ot2.name = "signs5"
-        subfile.manipulate_lines(change_style_for_actor(sign_actors, old_style="on top", new_style="signs5")).restyle(ot2, adjust_styles=False)
+    subfile = fix_dialog_signs(subfile, dialog_styles=["main", "default", "bottomcenter", "alt", "overlap", "italic", "internal", "narrat", "on top", "flashback"])
 
     subfile = subfile.set_headers((ASSHeader.ScaledBorderAndShadow, True)).manipulate_lines(strip_weird_unicode)
     if set_layoutres:
