@@ -10,6 +10,5 @@ def get_style(subfile:SubFile, style_name:str) -> Style|None:
     for style in styles:
         if style.name.casefold() == style_name.casefold():
             return style
-    else:
-        # Throw an error instead?
-        return None
+    # Throw an error instead?
+    return None
