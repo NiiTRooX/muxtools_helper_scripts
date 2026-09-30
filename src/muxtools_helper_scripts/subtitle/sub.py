@@ -107,7 +107,7 @@ def replace_text_in_subfile(file:PathLike, old:str, new:str) -> None:
         doc.dump_file(f)
 
 
-def fix_dialog_signs(subfile:SubFile, sign_actors = ("sign", "On-screen", "title", "Text"), dialog_styles = ("default", "main", "bottomcenter", "on top"), min_override_tags:int=2) -> SubFile:
+def fix_dialog_signs(subfile:SubFile, sign_actors = ("sign", "On-screen", "title", "Text", "OS"), dialog_styles = ("default", "main", "bottomcenter", "on top"), min_override_tags:int=2) -> SubFile:
     """
     Move signs that were authored using a dialog style onto their own dedicated style,
     without changing how they look.
