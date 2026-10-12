@@ -4,13 +4,13 @@ from typing import Any
 
 import ass
 from ass.line import Style
-from muxtools import ParsedFile, PathLike, SubFile, TrackType, ensure_path_exists, info
+from muxtools import ASSHeader, ParsedFile, PathLike, SubFile, TrackType, ensure_path_exists, info
 from muxtools.subtitle.basesub import _Line
 from muxtools.subtitle.sub import LINES
 
 from .style import get_style
 
-__all__ = ["all_subs_from_mkv", "detect_sign", "fix_dialog_signs", "get_sub_track", "replace_text_in_subfile"]
+__all__ = ["all_subs_from_mkv", "detect_sign", "fix_dialog_signs", "get_sub_track", "replace_text_in_subfile", "set_cr_headers"]
 
 
 def get_sub_track(file:PathLike, name:str|None=None, lang:str|None=None, is_forced:bool=False, is_default:bool|None=None, preserve_delay:bool=False, quiet:bool=True, **kwargs: Any) -> SubFile:
@@ -192,3 +192,11 @@ def count_override_tags(line:_Line, ignore:tuple[str]=('b', 'i')) -> int:
                 continue
             count += 1
     return count
+
+
+def set_cr_headers(subfile:SubFile) -> SubFile:
+    try:
+        subfile._read_doc().info["YCbCr Matrix"]
+    except KeyError:
+        subfile = subfile.set_headers((ASSHeader.YCbCr_Matrix, "TV.601"))
+    return subfile.set_headers((ASSHeader.LayoutResX, 640), (ASSHeader.LayoutResY, 360), (ASSHeader.ScaledBorderAndShadow, True))
